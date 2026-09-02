@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
-import { useApiClient, videoApi } from '../../utils/api';
+import { useApiClient, videoApi } from '@/utils/api';
 import { useQueryClient } from '@tanstack/react-query';
 
 

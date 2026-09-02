@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useAgriChat } from '../../hooks/useAgriChat';
+import { useAgriChat } from '@/hooks/useAgriChat';
 
 const QUICK_SUGGESTIONS = [
   "Comment traiter les chenilles sur mon maïs ?",

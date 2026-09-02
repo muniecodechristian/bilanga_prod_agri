@@ -13,7 +13,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useApiClient, videoApi } from '../../utils/api';
+import { useApiClient, videoApi } from '@/utils/api';
 
 type Comment = {
   _id: string;

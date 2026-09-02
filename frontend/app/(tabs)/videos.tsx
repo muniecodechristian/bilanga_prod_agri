@@ -12,10 +12,10 @@ import {
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
-import { useApiClient, videoApi } from '../../utils/api';
+import { useApiClient, videoApi } from '@/utils/api';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import CommentModal from '../../components/CommentModal';
+import CommentModal from '@/components/CommentModal';
 
 const { height: windowHeight, width: windowWidth } = Dimensions.get('window');
 const ITEM_HEIGHT = windowHeight - 80;
