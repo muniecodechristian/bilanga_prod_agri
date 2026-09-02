@@ -10,11 +10,13 @@ import {
   StyleSheet,
   ActivityIndicator,
   Keyboard,
-  SafeAreaView
+  SafeAreaView,
+  Modal,
+  FlatList
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useAgriChat, Message } from '../../hooks/useAgriChat';
+import { useAgriChat } from '../../hooks/useAgriChat';
 
 const QUICK_SUGGESTIONS = [
   "Comment traiter les chenilles sur mon maïs ?",
@@ -25,21 +27,34 @@ const QUICK_SUGGESTIONS = [
 
 export default function AdviceDetail() {
   const router = useRouter();
-  const { messages, sendMessage, isLoading, clearChat, error } = useAgriChat();
+  const { 
+    messages, 
+    sendMessage, 
+    conversations, 
+    activeConversationId, 
+    selectConversation, 
+    startNewChat, 
+    deleteConversation, 
+    isLoading, 
+    isStreaming, 
+    error 
+  } = useAgriChat();
+
   const [inputText, setInputText] = useState('');
+  const [historyModalVisible, setHistoryModalVisible] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll au bas lors de la réception des jetons SSE
   useEffect(() => {
     if (scrollViewRef.current) {
       setTimeout(() => {
         scrollViewRef.current?.scrollToEnd({ animated: true });
-      }, 100);
+      }, 50);
     }
-  }, [messages, isLoading]);
+  }, [messages, isStreaming]);
 
   const handleSend = () => {
-    if (inputText.trim()) {
+    if (inputText.trim() && !isStreaming) {
       sendMessage(inputText);
       setInputText('');
       Keyboard.dismiss();
@@ -47,7 +62,9 @@ export default function AdviceDetail() {
   };
 
   const handleSuggestion = (text: string) => {
-    sendMessage(text);
+    if (!isStreaming) {
+      sendMessage(text);
+    }
   };
 
   const formatTime = (date: Date) => {
@@ -68,12 +85,20 @@ export default function AdviceDetail() {
           </View>
           <View>
             <Text style={styles.headerTitle}>AgriBilanga IA</Text>
-            <Text style={styles.headerSubtitle}>Toujours en ligne</Text>
+            <Text style={styles.headerSubtitle}>
+              {isStreaming ? "Écriture en direct..." : "Toujours en ligne (30d TTL)"}
+            </Text>
           </View>
         </View>
 
-        <TouchableOpacity onPress={clearChat} style={styles.clearButton}>
-          <Ionicons name="trash-outline" size={22} color="#EF4444" />
+        {/* Bouton Nouvelle Discussion */}
+        <TouchableOpacity onPress={startNewChat} style={styles.headerIconBtn}>
+          <Ionicons name="create-outline" size={22} color="#10B981" />
+        </TouchableOpacity>
+
+        {/* Bouton Historique des discussions (Style Gemini) */}
+        <TouchableOpacity onPress={() => setHistoryModalVisible(true)} style={styles.headerIconBtn}>
+          <Ionicons name="time-outline" size={22} color="#4B5563" />
         </TouchableOpacity>
       </View>
 
@@ -87,61 +112,69 @@ export default function AdviceDetail() {
           style={styles.chatContainer}
           contentContainerStyle={styles.chatContent}
         >
-          {messages.map((msg) => (
-            <View 
-              key={msg.id} 
-              style={[
-                styles.messageWrapper, 
-                msg.role === 'user' ? styles.messageWrapperUser : styles.messageWrapperAssistant
-              ]}
-            >
-              {msg.role === 'assistant' && (
-                <View style={styles.smallAvatar}>
-                  <Text style={styles.smallAvatarText}>🤖</Text>
-                </View>
-              )}
+          {messages.map((msg, index) => {
+            const isLastAssistantMessage = msg.role === 'assistant' && index === messages.length - 1;
+            
+            return (
               <View 
+                key={msg.id} 
                 style={[
-                  styles.messageBubble, 
-                  msg.role === 'user' ? styles.messageBubbleUser : styles.messageBubbleAssistant
+                  styles.messageWrapper, 
+                  msg.role === 'user' ? styles.messageWrapperUser : styles.messageWrapperAssistant
                 ]}
               >
-                <Text style={[
-                  styles.messageText,
-                  msg.role === 'user' ? styles.messageTextUser : styles.messageTextAssistant
-                ]}>
-                  {msg.content}
-                </Text>
-                <Text style={[
-                  styles.timeText,
-                  msg.role === 'user' ? styles.timeTextUser : styles.timeTextAssistant
-                ]}>
-                  {formatTime(msg.timestamp)}
-                </Text>
+                {msg.role === 'assistant' && (
+                  <View style={styles.smallAvatar}>
+                    <Text style={styles.smallAvatarText}>🤖</Text>
+                  </View>
+                )}
+                <View 
+                  style={[
+                    styles.messageBubble, 
+                    msg.role === 'user' ? styles.messageBubbleUser : styles.messageBubbleAssistant
+                  ]}
+                >
+                  <Text style={[
+                    styles.messageText,
+                    msg.role === 'user' ? styles.messageTextUser : styles.messageTextAssistant
+                  ]}>
+                    {msg.content}
+                    {/* Indicateur de frappe clignotant pour le streaming SSE */}
+                    {isStreaming && isLastAssistantMessage && (
+                      <Text style={styles.cursorText}> ▍</Text>
+                    )}
+                  </Text>
+                  <Text style={[
+                    styles.timeText,
+                    msg.role === 'user' ? styles.timeTextUser : styles.timeTextAssistant
+                  ]}>
+                    {formatTime(msg.timestamp)}
+                  </Text>
+                </View>
               </View>
-            </View>
-          ))}
+            );
+          })}
 
-          {isLoading && (
+          {isLoading && !isStreaming && (
             <View style={[styles.messageWrapper, styles.messageWrapperAssistant]}>
               <View style={styles.smallAvatar}>
                 <Text style={styles.smallAvatarText}>🤖</Text>
               </View>
               <View style={[styles.messageBubble, styles.messageBubbleAssistant, styles.loadingBubble]}>
                 <ActivityIndicator size="small" color="#10B981" />
-                <Text style={styles.loadingText}>AgriBilanga réfléchit...</Text>
+                <Text style={styles.loadingText}>Connexion au flux IA...</Text>
               </View>
             </View>
           )}
 
-          {/* Quick Suggestions (only show if it's the first interaction) */}
+          {/* Quick Suggestions (Seulement si c'est une nouvelle discussion) */}
           {messages.length === 1 && !isLoading && (
             <View style={styles.suggestionsContainer}>
               <Text style={styles.suggestionsTitle}>Questions fréquentes :</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.suggestionsScroll}>
-                {QUICK_SUGGESTIONS.map((suggestion, index) => (
+                {QUICK_SUGGESTIONS.map((suggestion, idx) => (
                   <TouchableOpacity 
-                    key={index} 
+                    key={idx} 
                     style={styles.suggestionChip}
                     onPress={() => handleSuggestion(suggestion)}
                   >
@@ -163,16 +196,94 @@ export default function AdviceDetail() {
             onChangeText={setInputText}
             multiline
             maxLength={500}
+            editable={!isStreaming}
           />
           <TouchableOpacity 
-            style={[styles.sendButton, !inputText.trim() && styles.sendButtonDisabled]} 
+            style={[styles.sendButton, (!inputText.trim() || isStreaming) && styles.sendButtonDisabled]} 
             onPress={handleSend}
-            disabled={!inputText.trim() || isLoading}
+            disabled={!inputText.trim() || isStreaming}
           >
             <Ionicons name="send" size={20} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
+
+      {/* MODAL HISTORIQUE DES CONVERSATIONS (Style Gemini) */}
+      <Modal
+        visible={historyModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setHistoryModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Mes discussions IA (30j)</Text>
+              <TouchableOpacity onPress={() => setHistoryModalVisible(false)}>
+                <Ionicons name="close" size={24} color="#374151" />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity 
+              style={styles.newChatModalBtn}
+              onPress={() => {
+                startNewChat();
+                setHistoryModalVisible(false);
+              }}
+            >
+              <Ionicons name="add-circle-outline" size={20} color="#FFFFFF" />
+              <Text style={styles.newChatModalBtnText}>Nouvelle discussion</Text>
+            </TouchableOpacity>
+
+            <FlatList
+              data={conversations}
+              keyExtractor={(item) => item._id}
+              contentContainerStyle={styles.historyList}
+              ListEmptyComponent={
+                <View style={styles.emptyHistory}>
+                  <Text style={styles.emptyHistoryText}>Aucune discussion enregistrée.</Text>
+                </View>
+              }
+              renderItem={({ item }) => (
+                <View style={[
+                  styles.historyItem,
+                  item._id === activeConversationId && styles.historyItemActive
+                ]}>
+                  <TouchableOpacity 
+                    style={styles.historyItemMain}
+                    onPress={() => {
+                      selectConversation(item._id);
+                      setHistoryModalVisible(false);
+                    }}
+                  >
+                    <Ionicons 
+                      name="chatbubble-ellipses-outline" 
+                      size={18} 
+                      color={item._id === activeConversationId ? "#10B981" : "#6B7280"} 
+                    />
+                    <Text 
+                      style={[
+                        styles.historyItemTitle,
+                        item._id === activeConversationId && styles.historyItemTitleActive
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {item.title}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity 
+                    onPress={() => deleteConversation(item._id)}
+                    style={styles.deleteHistoryBtn}
+                  >
+                    <Ionicons name="trash-outline" size={18} color="#EF4444" />
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -195,33 +306,29 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
     elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
     paddingTop: Platform.OS === 'android' ? 40 : 12,
   },
   backButton: {
-    padding: 8,
-    marginLeft: -8,
+    padding: 6,
+    marginLeft: -6,
   },
   headerTitleContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 12,
+    marginLeft: 8,
   },
   avatarContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: '#DEF7EC',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: 10,
   },
   avatarText: {
-    fontSize: 20,
+    fontSize: 18,
   },
   headerTitle: {
     fontSize: 16,
@@ -229,12 +336,13 @@ const styles = StyleSheet.create({
     color: '#111827',
   },
   headerSubtitle: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#10B981',
     fontWeight: '500',
   },
-  clearButton: {
+  headerIconBtn: {
     padding: 8,
+    marginLeft: 4,
   },
   chatContainer: {
     flex: 1,
@@ -275,10 +383,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 16,
     elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 1,
   },
   messageBubbleUser: {
     backgroundColor: '#10B981',
@@ -299,6 +403,10 @@ const styles = StyleSheet.create({
   },
   messageTextAssistant: {
     color: '#1F2937',
+  },
+  cursorText: {
+    color: '#10B981',
+    fontWeight: 'bold',
   },
   timeText: {
     fontSize: 10,
@@ -344,11 +452,6 @@ const styles = StyleSheet.create({
     marginRight: 8,
     borderWidth: 1,
     borderColor: '#E5E7EB',
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 1,
   },
   suggestionText: {
     color: '#10B981',
@@ -385,15 +488,91 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginLeft: 12,
     marginBottom: 2,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
   },
   sendButtonDisabled: {
     backgroundColor: '#D1D5DB',
-    elevation: 0,
-    shadowOpacity: 0,
-  }
+  },
+  // MODAL HISTORIQUE
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: '80%',
+    padding: 20,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#111827',
+  },
+  newChatModalBtn: {
+    flexDirection: 'row',
+    backgroundColor: '#10B981',
+    borderRadius: 12,
+    paddingVertical: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 16,
+  },
+  newChatModalBtnText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 15,
+  },
+  historyList: {
+    paddingBottom: 20,
+  },
+  historyItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    marginBottom: 8,
+    backgroundColor: '#F9FAFB',
+  },
+  historyItemActive: {
+    backgroundColor: '#ECFDF5',
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  historyItemMain: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: 10,
+  },
+  historyItemTitle: {
+    fontSize: 14,
+    color: '#374151',
+    flex: 1,
+  },
+  historyItemTitleActive: {
+    fontWeight: '600',
+    color: '#065F46',
+  },
+  deleteHistoryBtn: {
+    padding: 6,
+  },
+  emptyHistory: {
+    paddingVertical: 32,
+    alignItems: 'center',
+  },
+  emptyHistoryText: {
+    color: '#9CA3AF',
+    fontSize: 14,
+  },
 });

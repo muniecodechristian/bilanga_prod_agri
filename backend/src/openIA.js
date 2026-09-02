@@ -1,17 +1,10 @@
 import OpenAI from "openai";
 import { ENV } from "./config/env.js";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Client OpenAI — clé lue depuis les variables d'environnement backend UNIQUEMENT
-// La clé n'est JAMAIS exposée au frontend.
-// ─────────────────────────────────────────────────────────────────────────────
 const client = new OpenAI({
   apiKey: ENV.OPENAI_API_KEY,
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// System prompt expert — Optimisé pour les agriculteurs d'Afrique subsaharienne
-// ─────────────────────────────────────────────────────────────────────────────
 const SYSTEM_PROMPT = `Tu es AgriBilanga, un assistant agricole expert et bienveillant, spécialisé dans l'agriculture africaine, notamment en Afrique subsaharienne (RDC, Congo, etc.).
 
 Tes compétences couvrent :
@@ -31,16 +24,13 @@ Règles STRICTES :
 5. Utilise des emojis avec modération pour rendre les réponses plus lisibles (🌱 🌿 💧 ☀️ etc.).`;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Fonction principale de chat avec historique de conversation
-// @param {Array} messages - Tableau de { role: "user"|"assistant", content: string }
-// @returns {string} - Réponse de l'IA
+// Mode Standard (Non-streaming)
 // ─────────────────────────────────────────────────────────────────────────────
 export default async function chat(messages) {
   if (!Array.isArray(messages) || messages.length === 0) {
     throw new Error("Le tableau de messages est requis et ne peut pas être vide.");
   }
 
-  // Limiter l'historique à 20 derniers échanges pour contrôler les coûts
   const trimmedHistory = messages.slice(-20);
 
   const response = await client.chat.completions.create({
@@ -49,9 +39,9 @@ export default async function chat(messages) {
       { role: "system", content: SYSTEM_PROMPT },
       ...trimmedHistory,
     ],
-    max_tokens: 750,        // Limite les coûts par réponse
-    temperature: 0.7,       // Créatif mais cohérent
-    presence_penalty: 0.1,  // Évite les répétitions
+    max_tokens: 750,
+    temperature: 0.7,
+    presence_penalty: 0.1,
   });
 
   const content = response.choices?.[0]?.message?.content;
@@ -60,4 +50,41 @@ export default async function chat(messages) {
   }
 
   return content;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mode Streaming SSE (Server-Sent Events) - Jeton par jeton en direct
+// ─────────────────────────────────────────────────────────────────────────────
+export async function chatStream(messages, onChunk) {
+  if (!Array.isArray(messages) || messages.length === 0) {
+    throw new Error("Le tableau de messages est requis et ne peut pas être vide.");
+  }
+
+  const trimmedHistory = messages.slice(-20);
+
+  const stream = await client.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT },
+      ...trimmedHistory,
+    ],
+    max_tokens: 750,
+    temperature: 0.7,
+    presence_penalty: 0.1,
+    stream: true,
+  });
+
+  let fullText = "";
+
+  for await (const chunk of stream) {
+    const textChunk = chunk.choices[0]?.delta?.content || "";
+    if (textChunk) {
+      fullText += textChunk;
+      if (onChunk) {
+        onChunk(textChunk);
+      }
+    }
+  }
+
+  return fullText;
 }

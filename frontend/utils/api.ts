@@ -87,7 +87,14 @@ export const commentApi = {
 export const agriApi = {
   chat: (api: AxiosInstance, data: { prompt?: string; messages?: Array<{role: string, content: string}> }) =>
     api.post("/chatIa", data),
+  getConversations: (api: AxiosInstance) =>
+    api.get("/chatIa/conversations"),
+  getMessages: (api: AxiosInstance, conversationId: string) =>
+    api.get(`/chatIa/conversations/${conversationId}/messages`),
+  deleteConversation: (api: AxiosInstance, conversationId: string) =>
+    api.delete(`/chatIa/conversations/${conversationId}`),
 };
+
 
 // ─── Video API (TikTok) ────────────────────────────────────────────────────────
 export const videoApi = {
