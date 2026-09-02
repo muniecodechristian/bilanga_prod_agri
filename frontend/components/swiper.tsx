@@ -1,13 +1,5 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Dimensions,
-  ImageBackground,
-} from "react-native";
-import Swiper from "react-native-swiper";
-
+import React, { useState, useEffect, useRef } from "react";
+import { View, Text, StyleSheet, Dimensions, ImageBackground } from "react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -29,58 +21,60 @@ const slides = [
   },
 ];
 
-
 const Slider = () => {
+  const [current, setCurrent] = useState(0);
+  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    timer.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 3000);
+    return () => {
+      if (timer.current) clearInterval(timer.current);
+    };
+  }, []);
+
+  const slide = slides[current];
+
   return (
     <View style={styles.container}>
-      <Swiper
-        autoplay
-        autoplayTimeout={3}
-        loop
-        showsPagination
-        paginationStyle={{ bottom: 12 }}
-        dotStyle={styles.dot}
-        activeDotStyle={styles.activeDot}
-        removeClippedSubviews={false}
+      <ImageBackground
+        source={slide.image}
+        style={styles.slide}
+        imageStyle={styles.image}
       >
-        {slides.map((slide) => (
-          <ImageBackground
-            key={slide.id}
-             source={slide.image}
-            style={styles.slide}
-            imageStyle={styles.image}
-          >
-            <View style={styles.overlay} />
-            <Text style={styles.title}>{slide.title}</Text>
-          </ImageBackground>
+        <View style={styles.overlay} />
+        <Text style={styles.title}>{slide.title}</Text>
+      </ImageBackground>
+
+      {/* Dots */}
+      <View style={styles.pagination}>
+        {slides.map((_, i) => (
+          <View
+            key={i}
+            style={[styles.dot, i === current && styles.activeDot]}
+          />
         ))}
-      </Swiper>
+      </View>
     </View>
   );
 };
 
 export default Slider;
 
-
-
-
-
 const styles = StyleSheet.create({
   container: {
     marginTop: 25,
     height: 180,
     marginVertical: 10,
-  
   },
-
- slide: {
-  width: width - 32,
-  height: 170,
-  alignSelf: "center",  
-  justifyContent: "flex-end",
-  padding: 16,
-},
-
+  slide: {
+    width: width - 32,
+    height: 170,
+    alignSelf: "center",
+    justifyContent: "flex-end",
+    padding: 16,
+  },
   image: {
     borderRadius: 16,
   },
@@ -93,6 +87,11 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 20,
     fontWeight: "700",
+  },
+  pagination: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 8,
   },
   dot: {
     backgroundColor: "rgba(255,255,255,0.4)",

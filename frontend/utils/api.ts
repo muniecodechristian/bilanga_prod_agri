@@ -82,3 +82,25 @@ export const commentApi = {
   createComment: (api: AxiosInstance, postId: string, content: string) =>
     api.post(`/comments/post/${postId}`, { content }),
 };
+
+// ─── Agri IA API ───────────────────────────────────────────────────────────────
+export const agriApi = {
+  chat: (api: AxiosInstance, data: { prompt?: string; messages?: Array<{role: string, content: string}> }) =>
+    api.post("/chatIa", data),
+};
+
+// ─── Video API (TikTok) ────────────────────────────────────────────────────────
+export const videoApi = {
+  getFeed: (api: AxiosInstance, page: number = 1, limit: number = 10) =>
+    api.get(`/videos/feed?page=${page}&limit=${limit}`),
+  uploadVideo: (api: AxiosInstance, data: FormData) =>
+    api.post("/videos", data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
+  toggleLike: (api: AxiosInstance, videoId: string) =>
+    api.post(`/videos/${videoId}/like`),
+  addComment: (api: AxiosInstance, videoId: string, content: string) =>
+    api.post(`/videos/${videoId}/comment`, { content }),
+  getComments: (api: AxiosInstance, videoId: string) =>
+    api.get(`/videos/${videoId}/comments`),
+};

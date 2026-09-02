@@ -31,6 +31,11 @@ export default function DetailsLayout() {
           animation: "slide_from_bottom",
         }}
       />
+      
+      <Stack.Screen
+        name="adviceDetail"
+        options={{ title: "Conseiller Agricole IA" }}
+      />
     </Stack>
   );
 }

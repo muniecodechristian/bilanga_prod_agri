@@ -11,12 +11,11 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import Swiper from "react-native-swiper";
 import { useGetRecoltes } from "@/hooks/userecolte";
 import { reverseCityToCoords } from "@/utils/reverseGeocode";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Backbutton from "@/components/backbutton";
-import MapView, { Marker } from "react-native-maps";
+import CustomMap from "@/components/CustomMap";
 import Modal from "react-native-modal";
 import Animated, { FadeInDown } from "react-native-reanimated";
 
@@ -165,44 +164,31 @@ const RecoltesEcommerce = () => {
                 loadingCoords ? (
                   <ActivityIndicator size="small" />
                 ) : coords ? (
-                  <MapView
+                  <CustomMap
                     style={{ flex: 1, margin: 0 }}
-                    initialRegion={{
-                      latitude: coords.lat,
-                      longitude: coords.lon,
-                      latitudeDelta: 0.05,
-                      longitudeDelta: 0.05,
-                    }}
-                  >
-                    <Marker
-                      coordinate={{
-                        latitude: coords.lat,
-                        longitude: coords.lon,
-                      }}
-                      title={selectedItem?.title}
-                    />
-                  </MapView>
+                    coords={coords}
+                    title={selectedItem?.title}
+                  />
                 ) : (
                   <Text>Coordonnées non trouvées</Text>
                 )
               ) : (
                 <ScrollView style={styles.modalContent}>
                   {Array.isArray(selectedItem.images) && selectedItem.images.length > 1 ? (
-                    <Swiper
+                    <ScrollView
+                      horizontal
+                      pagingEnabled
+                      showsHorizontalScrollIndicator={false}
                       style={{ height: width * 0.9 }}
-                      showsPagination
-                      dotStyle={{ backgroundColor: "#ccc" }}
-                      activeDotStyle={{ backgroundColor: "#27ae60" }}
-                      loop
                     >
                       {selectedItem.images.map((img, i) => (
                         <Image
                           key={i}
                           source={{ uri: img }}
-                          style={styles.modalImage}
+                          style={[styles.modalImage, { width }]}
                         />
                       ))}
-                    </Swiper>
+                    </ScrollView>
                   ) : selectedItem.images?.[0] ? (
                     <Image
                       source={{ uri: selectedItem.images[0] }}

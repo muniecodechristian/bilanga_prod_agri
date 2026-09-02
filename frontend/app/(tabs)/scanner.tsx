@@ -24,7 +24,7 @@ export default function PlantScanner() {
   const API_KEY = process.env.EXPO_PUBLIC_SCANNER_API_KEY || "";
 
   const pickImage = async (fromCamera = false) => {
-    let resultImg;
+    let resultImg: ImagePicker.ImagePickerResult;
 
     if (fromCamera) {
       resultImg = await ImagePicker.launchCameraAsync({
@@ -173,7 +173,7 @@ export default function PlantScanner() {
             </Text>
 
             <Text style={styles.modalSub}>
-              Confiance : {(result?.confidence * 100).toFixed(1)}%
+              Confiance : {((result?.confidence || 0) * 100).toFixed(1)}%
             </Text>
 
             <Text style={styles.modalDesc}>
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 26, fontWeight: "700", marginTop: 25, color: green },
   subtitle: {
     fontSize: 14,
-    color: "#aaffaa ",
+    color: "#aaffaa",
     marginBottom: 10,
     marginTop: 10,
   },

@@ -3,8 +3,6 @@ import React from 'react';
 import { MaterialIcons, MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 
 import { HapticTab } from '@/components/haptic-tab';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function TabLayout() {
   const activeColor = '#4CAF50';
@@ -80,6 +78,21 @@ export default function TabLayout() {
         }}
       />
 
+      {/* Vidéos TikTok */}
+      <Tabs.Screen
+        name="videos"
+        options={{
+          title: 'Vidéos',
+          tabBarIcon: ({ focused }) => (
+            <MaterialIcons
+              name="ondemand-video"
+              size={28}
+              color={focused ? activeColor : inactiveColor}
+            />
+          ),
+        }}
+      />
+
       {/* Communauté */}
       <Tabs.Screen
         name="community"
@@ -95,15 +108,14 @@ export default function TabLayout() {
         }}
       />
 
-      {/* Publier */}
+      {/* Publier une vidéo */}
       <Tabs.Screen
         name="publish"
         options={{
-          title: 'publish',
-          href: null, // Désactive navigation auto, agit comme un bouton
+          title: 'Publier',
           tabBarIcon: ({ focused }) => (
             <MaterialCommunityIcons
-              name="plus-circle-outline"
+              name="video-plus"
               size={32}
               color={focused ? activeColor : inactiveColor}
             />

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import PostComposer from "../../components/PostComposer";
 import PostsList from "../../components/PostsList";
 import { usePosts } from "../../hooks/usePosts";
-import { useUserSync } from "../../hooks/useUserSync";
 import {
   RefreshControl,
   ScrollView,
@@ -21,8 +20,6 @@ const HomeScreen = () => {
     await refetchPosts();
     setIsRefetching(false);
   };
-
-  useUserSync();
 
   return (
     <SafeAreaView style={styles.container}>

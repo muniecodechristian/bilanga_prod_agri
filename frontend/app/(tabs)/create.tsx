@@ -10,7 +10,7 @@ import {
   Switch,
 } from "react-native";
 
-import PhoneInput from "react-native-phone-number-input";
+
 import { CreateStyles as styles } from "@/GlobaleStyles/create";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -88,19 +88,15 @@ export default function CreatePostScreen() {
           multiline 
         />
         <View style={styles.phoneContainer}>
-          <PhoneInput
-            defaultCode="CD" // 🇨🇩 RDC
-            layout="first"
+          <TextInput
+            style={[styles.input, styles.phoneInput]}
+            placeholder="Numéro (ex: +243 812 345 678)"
             value={phone}
-            onChangeFormattedText={(text) => {
+            onChangeText={(text) => {
               setPhone(text);
-              setPhoneValid(text.length > 8); // validation simple
+              setPhoneValid(text.length > 8);
             }}
-            containerStyle={styles.phoneInput}
-            textContainerStyle={styles.phoneText}
-            textInputProps={{
-              placeholder: "Numéro (appel ou WhatsApp)",
-            }}
+            keyboardType="phone-pad"
           />
         </View>
 
