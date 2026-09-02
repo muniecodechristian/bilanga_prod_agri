@@ -4,10 +4,21 @@ import { Redirect } from "expo-router";
 import NetInfo from "@react-native-community/netinfo";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useAuthContext } from "@/context/AuthContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Index() {
   const { isSignedIn, isLoading } = useAuthContext();
   const [hasInternet, setHasInternet] = useState(true);
+  const [hasOnboarded, setHasOnboarded] = useState<boolean | null>(null);
+
+  // Vérifier onboarding
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      const value = await AsyncStorage.getItem("hasOnboarded");
+      setHasOnboarded(value === "true");
+    };
+    checkOnboarding();
+  }, []);
 
   // Vérifier connexion internet
   useEffect(() => {
@@ -28,7 +39,7 @@ export default function Index() {
   }, []);
 
   // 🕒 Chargement de la session
-  if (isLoading) {
+  if (isLoading || hasOnboarded === null) {
     return (
       <View style={styles.container}>
         <Animated.Image
@@ -75,9 +86,13 @@ export default function Index() {
     );
   }
 
-  // 🔐 Non connecté → login
+  // 🔐 Non connecté
   if (!isSignedIn) {
-    return <Redirect href="/(auth)/login" />;
+    if (hasOnboarded) {
+      return <Redirect href="/(auth)/login" />;
+    } else {
+      return <Redirect href="/(auth)/onboarding" />;
+    }
   }
 
   // ✅ Connecté → tabs
