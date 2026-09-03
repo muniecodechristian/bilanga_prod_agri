@@ -8,7 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Index() {
   const { isSignedIn, isLoading } = useAuthContext();
-  const [hasInternet, setHasInternet] = useState(true);
+
   const [hasOnboarded, setHasOnboarded] = useState<boolean | null>(null);
 
   // Vérifier onboarding
@@ -20,25 +20,9 @@ export default function Index() {
     checkOnboarding();
   }, []);
 
-  // Vérifier connexion internet
-  useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
-      if (state.isConnected === false) {
-        setHasInternet(false);
-        Alert.alert(
-          "Connexion impossible",
-          "Aucune connexion Internet. Veuillez activer vos données ou Wi-Fi.",
-          [{ text: "OK" }]
-        );
-      } else {
-        setHasInternet(true);
-      }
-    });
 
-    return () => unsubscribe();
-  }, []);
 
-  // 🕒 Chargement de la session
+  //  Chargement de la session
   if (isLoading || hasOnboarded === null) {
     return (
       <View style={styles.container}>
@@ -71,22 +55,9 @@ export default function Index() {
     );
   }
 
-  // Pas internet → message
-  if (!hasInternet) {
-    return (
-      <View style={styles.container}>
-        <Image
-          source={require("../../assets/images/anim.gif")}
-          style={{ width: 120, height: 120, marginBottom: 20 }}
-        />
-        <Text style={{ fontSize: 18, fontWeight: "bold", color: "red" }}>
-          Pas de connexion Internet
-        </Text>
-      </View>
-    );
-  }
 
-  // 🔐 Non connecté
+
+  //  Non connecté
   if (!isSignedIn) {
     if (hasOnboarded) {
       return <Redirect href="/(auth)/login" />;
@@ -95,7 +66,7 @@ export default function Index() {
     }
   }
 
-  // ✅ Connecté → tabs
+  //  Connecté → tabs
   return <Redirect href="/(tabs)" />;
 }
 

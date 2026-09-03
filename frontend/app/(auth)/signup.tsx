@@ -94,7 +94,7 @@ export default function SignupScreen() {
             entering={FadeInDown.duration(400).delay(100).springify()}
             style={styles.header}
           >
-            <Text style={styles.title}>Créer un compte 🌱</Text>
+            <Text style={styles.title}>Créer un compte </Text>
             <Text style={styles.subtitle}>
               Rejoignez notre communauté agricole
             </Text>

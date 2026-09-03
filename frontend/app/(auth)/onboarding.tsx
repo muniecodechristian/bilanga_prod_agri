@@ -14,7 +14,7 @@ const slides = [
     title: 'Analyse par IA',
     description: 'Diagnostiquez vos cultures en un instant grâce à la puissance de l\'intelligence artificielle.',
     image: require('../../assets/images/scan.png'),
-    colors: ['#a8e063', '#56ab2f'],
+    colors: ['#2c7744', '#4f6643ff',],
   },
   {
     id: 2,
@@ -27,8 +27,8 @@ const slides = [
     id: 3,
     title: 'Actualités & Vidéos',
     description: 'Restez informé des dernières tendances agricoles et regardez des astuces en vidéo.',
-    image: require('../../assets/images/news.png'),
-    colors: ['#2c7744', '#114a24'],
+    image: require('../../assets/images/Nature.png'),
+    colors: ['#63b97eff', '#000',],
   }
 ];
 
@@ -71,14 +71,14 @@ export default function OnboardingScreen() {
             style={styles.slide}
           >
             <View style={styles.imageContainer}>
-              <Animated.Image 
-                source={slide.image} 
-                style={styles.image} 
+              <Animated.Image
+                source={slide.image}
+                style={styles.image}
                 resizeMode="contain"
                 entering={FadeInDown.duration(600).delay(100 * index).springify()}
               />
             </View>
-            <Animated.View 
+            <Animated.View
               style={styles.textContainer}
               entering={FadeInUp.duration(600).delay(200).springify()}
             >
@@ -94,7 +94,7 @@ export default function OnboardingScreen() {
         <TouchableOpacity onPress={handleSkip} style={styles.skipButton}>
           <Text style={styles.skipText}>Passer</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity onPress={handleNext} style={styles.nextButton}>
           <Text style={styles.nextText}>
             {activeIndex === slides.length - 1 ? 'Commencer' : 'Suivant'}

@@ -64,7 +64,7 @@ export default function LoginScreen() {
             entering={FadeInDown.duration(400).delay(100).springify()}
             style={styles.header}
           >
-            <Text style={styles.title}>Bienvenue 👋</Text>
+            <Text style={styles.title}>Bienvenue </Text>
             <Text style={styles.subtitle}>
               Connectez-vous pour accéder à votre espace
             </Text>

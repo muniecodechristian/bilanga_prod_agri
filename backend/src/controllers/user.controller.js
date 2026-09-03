@@ -1,20 +1,29 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
+import Follower from "../models/follower.model.js";
 
 // GET /api/users/profile/:username — public
 export const getUserProfile = asyncHandler(async (req, res) => {
   const { username } = req.params;
-  const user = await User.findOne({ username });
+  const user = await User.findOne({ username }).lean();
   if (!user) return res.status(404).json({ error: "Utilisateur introuvable" });
-  res.status(200).json({ user });
+
+  const followersCount = await Follower.countDocuments({ following: user._id });
+  const followingCount = await Follower.countDocuments({ follower: user._id });
+
+  res.status(200).json({ user: { ...user, followersCount, followingCount } });
 });
 
 // GET /api/users/me — protégée
 export const getCurrentUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id).lean();
   if (!user) return res.status(404).json({ error: "Utilisateur introuvable" });
-  res.status(200).json({ user });
+
+  const followersCount = await Follower.countDocuments({ following: user._id });
+  const followingCount = await Follower.countDocuments({ follower: user._id });
+
+  res.status(200).json({ user: { ...user, followersCount, followingCount } });
 });
 
 // PUT /api/users/profile — protégée
@@ -49,16 +58,18 @@ export const followUser = asyncHandler(async (req, res) => {
     return res.status(404).json({ error: "Utilisateur introuvable" });
   }
 
-  const isFollowing = currentUser.following.includes(targetUserId);
+  if (targetUser.role !== "proprietaire") {
+    return res.status(403).json({ error: "Seul un propriétaire peut être suivi" });
+  }
 
-  if (isFollowing) {
+  const existingFollow = await Follower.findOne({ follower: currentUserId, following: targetUserId });
+
+  if (existingFollow) {
     // Unfollow
-    await User.findByIdAndUpdate(currentUserId, { $pull: { following: targetUserId } });
-    await User.findByIdAndUpdate(targetUserId, { $pull: { followers: currentUserId } });
+    await Follower.findByIdAndDelete(existingFollow._id);
   } else {
     // Follow
-    await User.findByIdAndUpdate(currentUserId, { $push: { following: targetUserId } });
-    await User.findByIdAndUpdate(targetUserId, { $push: { followers: currentUserId } });
+    await Follower.create({ follower: currentUserId, following: targetUserId });
 
     // Créer une notification
     await Notification.create({
@@ -69,6 +80,6 @@ export const followUser = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json({
-    message: isFollowing ? "Utilisateur désabonné" : "Utilisateur suivi",
+    message: existingFollow ? "Utilisateur désabonné" : "Utilisateur suivi",
   });
 });

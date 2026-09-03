@@ -214,7 +214,7 @@ export const useAgriChat = () => {
       setMessages((prev) =>
         prev.map((msg) =>
           msg.id === assistantMsgId
-            ? { ...msg, content: `❌ ${errorMessage}` }
+            ? { ...msg, content: ` ${errorMessage}` }
             : msg
         )
       );

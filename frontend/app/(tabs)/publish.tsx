@@ -54,7 +54,7 @@ export default function PublishVideoScreen() {
     setLoading(true);
     try {
       const formData = new FormData();
-      
+
       const uriParts = videoUri.split('.');
       const fileType = uriParts[uriParts.length - 1]?.toLowerCase() || 'mp4';
       const mimeType = fileType === 'mov' ? 'video/quicktime' : 'video/mp4';
@@ -74,7 +74,7 @@ export default function PublishVideoScreen() {
       // Invalidate the video feed cache so next visit shows the new video
       queryClient.invalidateQueries({ queryKey: ['videoFeed'] });
 
-      Alert.alert('🎬 Vidéo publiée !', 'Ta vidéo est maintenant visible dans le fil.', [
+      Alert.alert(' Vidéo publiée !', 'Ta vidéo est maintenant visible dans le fil.', [
         {
           text: 'Voir le fil',
           onPress: () => router.replace('/(tabs)/videos'),
@@ -97,7 +97,7 @@ export default function PublishVideoScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Publier une Vidéo</Text>
-          <Text style={styles.headerSub}>Partage tes récoltes avec la communauté 🌾</Text>
+          <Text style={styles.headerSub}>Partage tes récoltes avec la communauté </Text>
         </View>
 
         {/* Video Picker */}
@@ -134,7 +134,7 @@ export default function PublishVideoScreen() {
 
         {/* Tips */}
         <View style={styles.tipsContainer}>
-          <Text style={styles.tipsTitle}>💡 Conseils pour une bonne vidéo</Text>
+          <Text style={styles.tipsTitle}> Conseils pour une bonne vidéo</Text>
           <Text style={styles.tipItem}>• Montre clairement tes cultures et récoltes</Text>
           <Text style={styles.tipItem}>• Filme en lumière naturelle pour une meilleure qualité</Text>
           <Text style={styles.tipItem}>• Ajoute une description pour faciliter la vente</Text>
