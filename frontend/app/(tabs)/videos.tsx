@@ -263,7 +263,6 @@ const styles = StyleSheet.create({
   },
   gradientOverlay: {
     ...StyleSheet.absoluteFillObject,
-    background: undefined,
     backgroundColor: 'transparent',
     // On simule un gradient en bas avec une vue semi-transparente
     borderTopWidth: 0,

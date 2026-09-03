@@ -1,34 +1,34 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
+import LottieView from 'lottie-react-native';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const slides = [
   {
     id: 1,
     title: 'Analyse par IA',
     description: 'Diagnostiquez vos cultures en un instant grâce à la puissance de l\'intelligence artificielle.',
-    image: require('../../assets/images/scan.png'),
-    colors: ['#2c7744', '#4f6643ff',],
+    // A relevant agriculture/scan lottie url
+    lottieSource: { uri: 'https://lottie.host/80dc3d48-8df0-4b36-a367-27af72e27bcf/kG1YJg4P1q.json' },
   },
   {
     id: 2,
     title: 'Assistant Personnel',
     description: 'Discutez avec notre IA pour obtenir des conseils agricoles sur mesure, 24/7.',
-    image: require('../../assets/images/Chat.png'),
-    colors: ['#56ab2f', '#2c7744'],
+    // A relevant chat/assistant lottie url
+    lottieSource: { uri: 'https://lottie.host/76231e3d-71b5-41e9-92db-5c62ec96f30d/274aP8H8Hh.json' },
   },
   {
     id: 3,
     title: 'Actualités & Vidéos',
     description: 'Restez informé des dernières tendances agricoles et regardez des astuces en vidéo.',
-    image: require('../../assets/images/Nature.png'),
-    colors: ['#63b97eff', '#000',],
+    // A relevant news/video/agriculture lottie url
+    lottieSource: { uri: 'https://lottie.host/362547b7-6ec7-463d-b4b6-e2a23b3a6c22/RMBmD31hLz.json' },
   }
 ];
 
@@ -65,19 +65,18 @@ export default function OnboardingScreen() {
         onIndexChanged={(index) => setActiveIndex(index)}
       >
         {slides.map((slide, index) => (
-          <LinearGradient
-            key={slide.id}
-            colors={slide.colors}
-            style={styles.slide}
-          >
+          <View key={slide.id} style={styles.slide}>
             <View style={styles.imageContainer}>
-              <Animated.Image
-                source={slide.image}
-                style={styles.image}
-                resizeMode="contain"
-                entering={FadeInDown.duration(600).delay(100 * index).springify()}
-              />
+              <Animated.View entering={FadeInDown.duration(600).delay(100 * index).springify()}>
+                <LottieView
+                  source={slide.lottieSource}
+                  autoPlay
+                  loop
+                  style={styles.lottie}
+                />
+              </Animated.View>
             </View>
+            
             <Animated.View
               style={styles.textContainer}
               entering={FadeInUp.duration(600).delay(200).springify()}
@@ -85,7 +84,7 @@ export default function OnboardingScreen() {
               <Text style={styles.title}>{slide.title}</Text>
               <Text style={styles.description}>{slide.description}</Text>
             </Animated.View>
-          </LinearGradient>
+          </View>
         ))}
       </Swiper>
 
@@ -108,88 +107,92 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF', // Clean white background
   },
   slide: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
+    backgroundColor: '#FFFFFF',
   },
   imageContainer: {
-    flex: 0.6,
-    justifyContent: 'center',
+    flex: 0.55,
+    justifyContent: 'flex-end',
     alignItems: 'center',
+    paddingBottom: 40,
   },
-  image: {
-    width: width * 0.8,
-    height: width * 0.8,
+  lottie: {
+    width: width * 0.85,
+    height: width * 0.85,
   },
   textContainer: {
-    flex: 0.4,
+    flex: 0.45,
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
   },
   title: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 15,
+    fontWeight: '800',
+    color: '#1F2937', // Dark gray for high contrast
+    marginBottom: 16,
     textAlign: 'center',
+    letterSpacing: -0.5,
   },
   description: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.9)',
+    color: '#6B7280', // Lighter elegant gray
     textAlign: 'center',
     lineHeight: 24,
+    fontWeight: '400',
   },
   dot: {
-    backgroundColor: 'rgba(255,255,255,0.4)',
+    backgroundColor: '#E5E7EB',
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginHorizontal: 5,
-    marginBottom: 80,
+    marginHorizontal: 4,
+    marginBottom: 100,
   },
   activeDot: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#10B981', // Brand green
     width: 24,
     height: 8,
     borderRadius: 4,
-    marginHorizontal: 5,
-    marginBottom: 80,
+    marginHorizontal: 4,
+    marginBottom: 100,
   },
   footer: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 40,
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    paddingHorizontal: 30,
+    paddingHorizontal: 24,
     alignItems: 'center',
   },
   skipButton: {
-    padding: 10,
+    padding: 12,
   },
   skipText: {
     fontSize: 16,
-    color: '#ffffff',
+    color: '#9CA3AF',
     fontWeight: '600',
   },
   nextButton: {
-    backgroundColor: '#ffffff',
-    paddingVertical: 12,
-    paddingHorizontal: 25,
+    backgroundColor: '#10B981', // Brand green for primary action
+    paddingVertical: 14,
+    paddingHorizontal: 32,
     borderRadius: 30,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 5,
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   nextText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2c7744',
+    fontWeight: '700',
+    color: '#FFFFFF', // White text on green button
   }
 });

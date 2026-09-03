@@ -1,4 +1,5 @@
 import express from "express";
+import http from "http";
 import cors from "cors";
 
 import authRoutes from "./routes/auth.route.js";
@@ -9,13 +10,18 @@ import notificationRoutes from "./routes/notification.route.js";
 import recolteRoutes from "./routes/recolte.route.js";
 import chatIaRoutes from "./routes/agriChat.route.js";
 import videoRoutes from "./routes/video.route.js";
+import chatRoutes from "./routes/chat.routes.js";
 
 import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
 import { arcjetMiddleware } from "./middleware/arcjet.middleware.js";
+import { initSocket } from "./socket.js";
 
 const app = express();
+const server = http.createServer(app);
 const PORT = ENV.PORT || 3000;
+
+initSocket(server);
 
 app.use(cors());
 app.use(express.json());
@@ -33,6 +39,7 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/recoltes", recolteRoutes);
 app.use("/api/chatIa", chatIaRoutes);
 app.use("/api/videos", videoRoutes);
+app.use("/api/chat", chatRoutes);
 
 
 // Error handling middleware
@@ -47,7 +54,7 @@ const startServer = async () => {
 
     // listen for local development
     if (ENV.NODE_ENV !== "production") {
-      app.listen(PORT, () => console.log("Server is up and running on PORT:", PORT));
+      server.listen(PORT, () => console.log("Server is up and running on PORT:", PORT));
     }
   } catch (error) {
     console.error("Failed to start server:", error.message);
@@ -58,4 +65,4 @@ const startServer = async () => {
 startServer();
 
 // export for vercel
-export default app;
+export default server;
