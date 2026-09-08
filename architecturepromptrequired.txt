@@ -1,0 +1,17 @@
+fais de l'architecure hexagonale et ddd j'exige au backend
+donc ecrit du code scalable modulaire au backend
+ecris des test unitaire avec vitest de maniere senior 
+ecris des test d'integrations senior
+change le backend de js en typescript et separe mieux les dossier des tout les types à part 
+ecris tout les types biens sans erreur en prod 
+met les outils de securites commes mongo sanity pour eviter les attaque xss 
+utilise helmet pour les entetes 
+utilise expess rate limiter 
+
+travaille sur la sécurité senior des tokens travaille sur la fonctionnaliter de refresh tokens tres securiser 
+installe et configure a librairie de retry logs dans kesfonctionnalites qui le demande d'etre là
+
+
+
+et la prochaine etapes tu va travailer sur le cryptages des messages des utilisateur là ca sera à mon signal bro 
+

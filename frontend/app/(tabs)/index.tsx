@@ -47,7 +47,7 @@ const extraCards: ExtraCard[] = [
     id: 8,
     title: "Conseils Agricoles",
     icon: require("../../assets/images/conseils.png"),
-    route: "/(details)/index",
+    route: "/(details)/advice",
   },
   {
     id: 9,

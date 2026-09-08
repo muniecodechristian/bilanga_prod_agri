@@ -5,7 +5,9 @@ import { useAuthContext } from "@/context/AuthContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 
-const API_BASE_URL = "https://bilanga-app-backend2.vercel.app/api/recoltes";
+import { API_BASE_URL } from "@/utils/api";
+
+const API_URL = `${API_BASE_URL}/recoltes`;
 
 export function useCreateRecoltePost() {
   const { user, token } = useAuthContext();
@@ -95,7 +97,7 @@ export function useCreateRecoltePost() {
       formData.append("city", city);
       formData.append("country", country);
 
-      const res = await fetch(API_BASE_URL, {
+      const res = await fetch(API_URL, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

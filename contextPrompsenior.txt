@@ -1,0 +1,27 @@
+dans le tabs il ya trop des menus , je veux que tu met la tas de create video dans le meme create poir recolte , 
+sauf qu'il ait des bouttns sous forme d'onboarding beau de style et qui ne complique pas les ui et ux qui demandera al'utilisateur au chargement ou à l'entreé du composant 
+create si il veux publier un poste en image ou en vidéo( les eux button de proposition)
+de trois le tabs de prendre une photo de reconnaissance de la plante tu l'enleve dans le dossier tabs tu le met 
+dans details histoire de diminuer les nombres des tabs et icone ou menu pour mesage entre deux utilisateurs (socket ) tu cree un floating button au global de l'app met qui n'empeche pas l'ui ux navigation des users dans les componennts 
+et tu cree un screen pour la messagerie nomme le followerschat par defaut si il n'ya pas pas des conversation tu propose unjoli button ui qui lui permet si il est proprietaire et qu'il a ds followers qu'il selectionne et l'ajoute comme dans whatsapp et si le user role est 
+client qu'on lui propose des users uniquement avec role proprietaire qu'il peut s'aboner ou les ajouters dans la listes des conversations
+et pour l'ia qui donne les conseille des plantes qu'il soit disponble que pour les roles proprietaires et ne peux publier une video ou recoltes disponibles qu'un proprietaire
+et puis le chat avec ia oit que dans a page advice directement au lieudans d'aller dns advice details 
+et dans advice si l'utilisateur lance une nouvelle conversation tu peux les proposer quelques emojisdes fruits et leurs noms en fin de le selectionner pour raccourci au lieu toujour de promter manuellemnt  et renomerle fichier advice avec un nom parlant  de la fonctionnaliter et le fichier chats qui comprend la fonctionnliter d'afficher les recoltes disponibles renome le avec un nom parlant de sa fontionnaliter 
+
+point trois 
+
+ les requis : tu es un senior dev de plus de 30 ans d'experience 
+ne ccode pas seulement les fonctions qui marchent mais qui vit qui respecte les normes des applications des grandes bites comme anthropic google tik tok 
+n'ecrit pas du code spaghetti 
+soit un lead senior 
+regarde toutes les modelisation si c'est ecrit de maniere senior ou ca respecte les normes des modelisations des groisse boites 
+et que ca ne permet pas de  saturer la memoire de mongoDB (son 16 méga )
+et s'il ya des indexations TTL
+  sans oubler de mettre les expirations par defaut de 1 mois pour les notification et celle des likes ou commentaire en 2 semaine 
+
+
+
+
+
+

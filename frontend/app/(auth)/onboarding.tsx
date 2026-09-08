@@ -3,8 +3,7 @@ import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-nati
 import Swiper from 'react-native-swiper';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
-import LottieView from 'lottie-react-native';
+import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 
 const { width } = Dimensions.get('window');
 
@@ -13,22 +12,19 @@ const slides = [
     id: 1,
     title: 'Analyse par IA',
     description: 'Diagnostiquez vos cultures en un instant grâce à la puissance de l\'intelligence artificielle.',
-    // A relevant agriculture/scan lottie url
-    lottieSource: { uri: 'https://lottie.host/80dc3d48-8df0-4b36-a367-27af72e27bcf/kG1YJg4P1q.json' },
+    image: require('../../assets/images/scan.png'),
   },
   {
     id: 2,
     title: 'Assistant Personnel',
     description: 'Discutez avec notre IA pour obtenir des conseils agricoles sur mesure, 24/7.',
-    // A relevant chat/assistant lottie url
-    lottieSource: { uri: 'https://lottie.host/76231e3d-71b5-41e9-92db-5c62ec96f30d/274aP8H8Hh.json' },
+    image: require('../../assets/images/Chat.png'),
   },
   {
     id: 3,
     title: 'Actualités & Vidéos',
     description: 'Restez informé des dernières tendances agricoles et regardez des astuces en vidéo.',
-    // A relevant news/video/agriculture lottie url
-    lottieSource: { uri: 'https://lottie.host/362547b7-6ec7-463d-b4b6-e2a23b3a6c22/RMBmD31hLz.json' },
+    image: require('../../assets/images/rice.png'),
   }
 ];
 
@@ -67,16 +63,14 @@ export default function OnboardingScreen() {
         {slides.map((slide, index) => (
           <View key={slide.id} style={styles.slide}>
             <View style={styles.imageContainer}>
-              <Animated.View entering={FadeInDown.duration(600).delay(100 * index).springify()}>
-                <LottieView
-                  source={slide.lottieSource}
-                  autoPlay
-                  loop
-                  style={styles.lottie}
-                />
-              </Animated.View>
+              <Animated.Image
+                source={slide.image}
+                style={styles.image}
+                resizeMode="contain"
+                entering={ZoomIn.duration(800).delay(100 * index).springify()}
+              />
             </View>
-            
+
             <Animated.View
               style={styles.textContainer}
               entering={FadeInUp.duration(600).delay(200).springify()}
@@ -122,9 +116,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 40,
   },
-  lottie: {
-    width: width * 0.85,
-    height: width * 0.85,
+  image: {
+    width: width * 0.75,
+    height: width * 0.75,
   },
   textContainer: {
     flex: 0.45,

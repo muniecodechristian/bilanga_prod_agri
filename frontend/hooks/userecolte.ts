@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 
-const API_URL = "https://bilanga-app-backend2.vercel.app/api/recoltes";
+import { API_BASE_URL } from "@/utils/api";
+
+const API_URL = `${API_BASE_URL}/recoltes`;
 
 export function useGetRecoltes() {
   const {

@@ -17,9 +17,14 @@ import { router } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useAuthContext } from "@/context/AuthContext";
 
-const green = "#2E7D32";
-const lightGreen = "#E6F4EA";
-const accent = "#34A853";
+const COLORS = {
+  background: "#FFFFFF",
+  primary: "#10B981",
+  text: "#000000",
+  textMuted: "#737373",
+  inputBg: "#FAFAFA",
+  inputBorder: "#E5E5E5",
+};
 
 export default function LoginScreen() {
   const { login } = useAuthContext();
@@ -33,7 +38,6 @@ export default function LoginScreen() {
       Alert.alert("Champs requis", "Veuillez remplir tous les champs.");
       return;
     }
-
     setIsLoading(true);
     try {
       await login({ identifier: identifier.trim(), password });
@@ -59,31 +63,28 @@ export default function LoginScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Header */}
-          <Animated.View
-            entering={FadeInDown.duration(400).delay(100).springify()}
-            style={styles.header}
-          >
-            <Text style={styles.title}>Bienvenue </Text>
-            <Text style={styles.subtitle}>
-              Connectez-vous pour accéder à votre espace
-            </Text>
-          </Animated.View>
+          <View style={styles.topContainer}>
+            {/* Header */}
+            <Animated.View
+              entering={FadeInDown.duration(400).delay(100).springify()}
+              style={styles.header}
+            >
+              <Text style={styles.title}>Hereux de vous revoir !</Text>
+              <Text style={styles.subtitle}>
+                Connectez-vous pour accéder à votre espace
+              </Text>
+            </Animated.View>
 
-          {/* Formulaire */}
-          <Animated.View
-            entering={FadeInDown.duration(500).delay(200).springify()}
-            style={styles.form}
-          >
-            {/* Identifiant */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email, téléphone ou nom d'utilisateur</Text>
+            {/* Form */}
+            <Animated.View
+              entering={FadeInDown.duration(500).delay(200).springify()}
+              style={styles.form}
+            >
               <View style={styles.inputWrapper}>
-                <Feather name="user" size={18} color="#888" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
-                  placeholder="ex: jean@example.com ou +243..."
-                  placeholderTextColor="#aaa"
+                  placeholder="Email, téléphone ou nom d'utilisateur"
+                  placeholderTextColor={COLORS.textMuted}
                   value={identifier}
                   onChangeText={setIdentifier}
                   autoCapitalize="none"
@@ -91,17 +92,12 @@ export default function LoginScreen() {
                   returnKeyType="next"
                 />
               </View>
-            </View>
 
-            {/* Mot de passe */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Mot de passe</Text>
               <View style={styles.inputWrapper}>
-                <Feather name="lock" size={18} color="#888" style={styles.inputIcon} />
                 <TextInput
                   style={[styles.input, { flex: 1 }]}
-                  placeholder="••••••••"
-                  placeholderTextColor="#aaa"
+                  placeholder="Mot de passe"
+                  placeholderTextColor={COLORS.textMuted}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry={!showPassword}
@@ -115,43 +111,54 @@ export default function LoginScreen() {
                   <Feather
                     name={showPassword ? "eye-off" : "eye"}
                     size={18}
-                    color="#888"
+                    color={COLORS.textMuted}
                   />
                 </TouchableOpacity>
               </View>
-            </View>
 
-            {/* Bouton connexion */}
-            <TouchableOpacity
-              style={[styles.button, isLoading && styles.buttonDisabled]}
-              onPress={handleLogin}
-              disabled={isLoading}
-              activeOpacity={0.85}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.buttonText}>Se connecter</Text>
-              )}
-            </TouchableOpacity>
-          </Animated.View>
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  (!identifier || !password) && styles.buttonDisabled,
+                ]}
+                onPress={handleLogin}
+                disabled={isLoading || !identifier || !password}
+                activeOpacity={0.8}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.buttonText}>Se connecter</Text>
+                )}
+              </TouchableOpacity>
 
-          {/* Lien vers inscription */}
+              <TouchableOpacity style={styles.forgotPassword}>
+                <Text style={styles.forgotPasswordText}>
+                  Mot de passe oublié ?
+                </Text>
+              </TouchableOpacity>
+            </Animated.View>
+          </View>
+
+          <View style={{ flex: 1, minHeight: 40 }} />
+
+          {/* Footer */}
           <Animated.View
             entering={FadeInDown.duration(600).delay(300).springify()}
             style={styles.footer}
           >
-            <Text style={styles.footerText}>Pas encore de compte ?</Text>
-            <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
-              <Text style={styles.footerLink}> S'inscrire</Text>
-            </TouchableOpacity>
+            <View style={styles.divider} />
+            <View style={styles.footerRow}>
+              <Text style={styles.footerText}>Pas encore de compte ?</Text>
+              <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
+                <Text style={styles.footerLink}> Inscrivez-vous.</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.poweredBy}>
+              <Text style={styles.poweredText}> from </Text>
+              <Text style={styles.poweredBrand}>Munie Group</Text>
+            </View>
           </Animated.View>
-
-          {/* Powered by */}
-          <View style={styles.poweredBy}>
-            <Text style={styles.poweredText}>Powered by </Text>
-            <Text style={styles.poweredBrand}>Munie Group</Text>
-          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -161,107 +168,116 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: lightGreen,
+    backgroundColor: COLORS.background,
   },
   scrollContent: {
     flexGrow: 1,
-    padding: 24,
-    justifyContent: "center",
+  },
+  topContainer: {
+    paddingTop: 80,
   },
   header: {
-    marginBottom: 36,
+    alignItems: "center",
+    paddingHorizontal: 24,
+    marginBottom: 40,
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "800",
-    color: green,
+    color: COLORS.text,
     marginBottom: 8,
+    letterSpacing: -1,
   },
   subtitle: {
-    fontSize: 15,
-    color: "#555",
-    lineHeight: 22,
+    fontSize: 14,
+    color: COLORS.textMuted,
+    textAlign: "center",
   },
   form: {
-    gap: 16,
-  },
-  inputGroup: {
-    gap: 6,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: green,
-    marginLeft: 2,
+    paddingHorizontal: 24,
+    gap: 12,
   },
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    borderWidth: 1.5,
-    borderColor: "#d0e8d0",
-    paddingHorizontal: 14,
+    backgroundColor: COLORS.inputBg,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: COLORS.inputBorder,
+    paddingHorizontal: 16,
     height: 52,
-  },
-  inputIcon: {
-    marginRight: 10,
   },
   input: {
     flex: 1,
-    fontSize: 15,
-    color: "#222",
+    fontSize: 14,
+    color: COLORS.text,
   },
   eyeButton: {
     padding: 4,
+    marginLeft: 8,
   },
   button: {
-    backgroundColor: accent,
-    borderRadius: 12,
+    backgroundColor: COLORS.primary,
+    borderRadius: 8,
     height: 52,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 8,
-    shadowColor: accent,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    marginTop: 12,
   },
   buttonDisabled: {
-    opacity: 0.7,
+    backgroundColor: "#A7F3D0",
   },
   buttonText: {
     color: "#fff",
-    fontSize: 17,
-    fontWeight: "700",
+    fontSize: 15,
+    fontWeight: "600",
+  },
+  forgotPassword: {
+    alignItems: "center",
+    marginTop: 16,
+  },
+  forgotPasswordText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: COLORS.primary,
   },
   footer: {
+    alignItems: "center",
+    paddingBottom: 30,
+    paddingTop: 10,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: COLORS.inputBorder,
+    width: "100%",
+    marginBottom: 20,
+  },
+  footerRow: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 28,
+    alignItems: "center",
+    marginBottom: 16,
   },
   footerText: {
-    color: "#555",
-    fontSize: 15,
+    color: COLORS.textMuted,
+    fontSize: 13,
   },
   footerLink: {
-    color: accent,
-    fontSize: 15,
-    fontWeight: "700",
+    color: COLORS.primary,
+    fontSize: 13,
+    fontWeight: "600",
   },
   poweredBy: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: 32,
   },
   poweredText: {
-    color: "#aaa",
-    fontSize: 13,
+    color: COLORS.textMuted,
+    fontSize: 12,
   },
   poweredBrand: {
-    color: accent,
-    fontSize: 13,
-    fontWeight: "700",
+    color: COLORS.text,
+    fontSize: 12,
+    fontWeight: "600",
   },
 });

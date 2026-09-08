@@ -10,13 +10,13 @@ import {
   StyleSheet,
   ActivityIndicator,
   Keyboard,
-  SafeAreaView,
   Modal,
   FlatList
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAgriChat } from '@/hooks/useAgriChat';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const QUICK_SUGGESTIONS = [
   "Comment traiter les chenilles sur mon maïs ?",
@@ -105,7 +105,7 @@ export default function AdviceDetail() {
       {/* CHAT AREA */}
       <KeyboardAvoidingView 
         style={styles.flex1} 
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
         <ScrollView 
           ref={scrollViewRef}

@@ -49,7 +49,7 @@ interface AuthContextType {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || "https://bilanga-app-backend2.vercel.app/api";
+  process.env.EXPO_PUBLIC_API_URL || "http://localhost:5000/api";
 
 const TOKEN_KEY = "auth_token";
 const USER_KEY = "auth_user";

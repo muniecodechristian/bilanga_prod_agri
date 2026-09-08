@@ -14,7 +14,7 @@ import chatRoutes from "./routes/chat.routes.js";
 
 import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
-import { arcjetMiddleware } from "./middleware/arcjet.middleware.js";
+//import { arcjetMiddleware } from "./middleware/arcjet.middleware.js";
 import { initSocket } from "./socket.js";
 
 const app = express();
@@ -26,7 +26,7 @@ initSocket(server);
 app.use(cors());
 app.use(express.json());
 
-app.use(arcjetMiddleware);
+//app.use(arcjetMiddleware);
 
 app.get("/", (req, res) => res.send("Hello from server"));
 

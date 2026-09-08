@@ -1,8 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || "https://bilanga-app-backend2.vercel.app/api";
+export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:5000/api";
 
 const TOKEN_KEY = "auth_token";
 
@@ -85,7 +84,7 @@ export const commentApi = {
 
 // ─── Agri IA API ───────────────────────────────────────────────────────────────
 export const agriApi = {
-  chat: (api: AxiosInstance, data: { prompt?: string; messages?: Array<{role: string, content: string}> }) =>
+  chat: (api: AxiosInstance, data: { prompt?: string; messages?: Array<{ role: string, content: string }> }) =>
     api.post("/chatIa", data),
   getConversations: (api: AxiosInstance) =>
     api.get("/chatIa/conversations"),
@@ -101,9 +100,7 @@ export const videoApi = {
   getFeed: (api: AxiosInstance, page: number = 1, limit: number = 10) =>
     api.get(`/videos/feed?page=${page}&limit=${limit}`),
   uploadVideo: (api: AxiosInstance, data: FormData) =>
-    api.post("/videos", data, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }),
+    api.post("/videos", data),
   toggleLike: (api: AxiosInstance, videoId: string) =>
     api.post(`/videos/${videoId}/like`),
   addComment: (api: AxiosInstance, videoId: string, content: string) =>

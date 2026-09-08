@@ -26,9 +26,9 @@ const checkRateLimit = (userId) => {
   return true;
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+
 // 1. Streaming Chat avec Server-Sent Events (SSE) & Persistence TTL (30 jours)
-// ─────────────────────────────────────────────────────────────────────────────
+
 export const streamChatWithIa = async (req, res) => {
   const { prompt, conversationId } = req.body;
   const userId = req.user?._id?.toString();
@@ -139,7 +139,7 @@ export const streamChatWithIa = async (req, res) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 2. Obtenir la liste des conversations actives de l'utilisateur
-// ─────────────────────────────────────────────────────────────────────────────
+
 export const getConversations = async (req, res) => {
   try {
     const userId = req.user._id;
