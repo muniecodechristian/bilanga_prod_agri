@@ -33,4 +33,7 @@ const notificationSchema = new mongoose.Schema(
 
 const Notification = mongoose.model("Notification", notificationSchema);
 
+// Add TTL index to automatically delete notifications after 30 days
+notificationSchema.index({ createdAt: 1 }, { expireAfterSeconds: 2592000 });
+
 export default Notification;

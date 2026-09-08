@@ -29,4 +29,7 @@ const commentSchema = new mongoose.Schema(
 
 const Comment = mongoose.model("Comment", commentSchema);
 
+// Add TTL index to automatically delete comments after 14 days
+commentSchema.index({ createdAt: 1 }, { expireAfterSeconds: 1209600 });
+
 export default Comment;

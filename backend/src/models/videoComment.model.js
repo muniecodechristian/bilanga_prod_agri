@@ -27,4 +27,7 @@ const videoCommentSchema = new mongoose.Schema(
 
 const VideoComment = mongoose.model("VideoComment", videoCommentSchema);
 
+// Add TTL index to automatically delete video comments after 14 days
+videoCommentSchema.index({ createdAt: 1 }, { expireAfterSeconds: 1209600 });
+
 export default VideoComment;

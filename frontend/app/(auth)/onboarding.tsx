@@ -24,7 +24,7 @@ const slides = [
     id: 3,
     title: 'Actualités & Vidéos',
     description: 'Restez informé des dernières tendances agricoles et regardez des astuces en vidéo.',
-    image: require('../../assets/images/rice.png'),
+    image: require('../../assets/images/Nature.png'),
   }
 ];
 

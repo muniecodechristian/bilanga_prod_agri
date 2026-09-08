@@ -41,19 +41,19 @@ const extraCards: ExtraCard[] = [
     id: 7,
     title: "Scanner une Plante",
     icon: require("../../assets/images/scanner.png"),
-    route: "/scanner",
+    route: "/(details)/scanner",
   },
   {
     id: 8,
     title: "Conseils Agricoles",
     icon: require("../../assets/images/conseils.png"),
-    route: "/(details)/advice",
+    route: "/(details)/aiConsultation",
   },
   {
     id: 9,
     title: "Récoltes disponibles",
     icon: require("../../assets/images/splash.png"),
-    route: "/(details)/chats",
+    route: "/(details)/availableHarvests",
   },
 ];
 

@@ -21,4 +21,7 @@ videoLikeSchema.index({ user: 1, video: 1 }, { unique: true });
 
 const VideoLike = mongoose.model("VideoLike", videoLikeSchema);
 
+// Add TTL index to automatically delete video likes after 14 days
+videoLikeSchema.index({ createdAt: 1 }, { expireAfterSeconds: 1209600 });
+
 export default VideoLike;
