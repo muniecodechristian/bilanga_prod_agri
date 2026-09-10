@@ -16,6 +16,35 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npx expo start
    ```
 
+## Connexion au backend
+
+En developpement, l'application utilise automatiquement l'adresse IP du PC
+annoncee par Expo Go et le port backend `5000`. Le telephone et le PC doivent
+etre connectes au meme reseau Wi-Fi. Lance le backend puis Expo avec :
+
+```bash
+# terminal backend
+npm run dev
+
+# terminal frontend
+npx expo start --lan
+```
+
+Si le backend utilise un autre port, cree `frontend/.env` avec :
+
+```env
+EXPO_PUBLIC_API_PORT=3000
+```
+
+Pour la production, definis uniquement l'URL publique de l'API dans
+`frontend/.env` ou dans la configuration de build Expo :
+
+```env
+EXPO_PUBLIC_API_URL=https://api.example.com/api
+```
+
+Cette variable est prioritaire sur la detection automatique de l'adresse locale.
+
 In the output, you'll find options to open the app in a
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)

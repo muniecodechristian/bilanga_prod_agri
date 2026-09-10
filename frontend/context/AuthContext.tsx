@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { API_BASE_URL } from "@/utils/api";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type UserRole = "proprietaire" | "client";
@@ -48,9 +49,6 @@ interface AuthContextType {
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || "http://localhost:5000/api";
-
 const TOKEN_KEY = "auth_token";
 const USER_KEY = "auth_user";
 

@@ -19,7 +19,7 @@ import { initSocket } from "./socket.js";
 
 const app = express();
 const server = http.createServer(app);
-const PORT = ENV.PORT || 3000;
+const PORT = ENV.PORT || 5000;
 
 initSocket(server);
 

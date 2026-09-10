@@ -1,7 +1,24 @@
 import axios, { AxiosInstance } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
 
-export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_PORT = process.env.EXPO_PUBLIC_API_PORT || "5000";
+
+const getDevelopmentApiUrl = () => {
+  const hostUri = Constants.expoConfig?.hostUri;
+  const expoHost = hostUri?.split(":")[0];
+
+  if (expoHost) {
+    return `http://${expoHost}:${API_PORT}/api`;
+  }
+
+  return `http://localhost:${API_PORT}/api`;
+};
+
+const configuredApiUrl = process.env.EXPO_PUBLIC_API_URL?.trim();
+
+export const API_BASE_URL =
+  configuredApiUrl || (__DEV__ ? getDevelopmentApiUrl() : "");
 
 const TOKEN_KEY = "auth_token";
 
