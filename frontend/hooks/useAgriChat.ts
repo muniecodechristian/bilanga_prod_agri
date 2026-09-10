@@ -12,6 +12,7 @@ export type Message = {
 export type Conversation = {
   _id: string;
   title: string;
+  
   lastMessageAt: string;
   expireAt: string;
 };

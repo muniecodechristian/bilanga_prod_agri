@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 
-const API_PORT = process.env.EXPO_PUBLIC_API_PORT || "5000";
+const API_PORT = process.env.EXPO_PUBLIC_API_PORT || "5600";
 
 const getDevelopmentApiUrl = () => {
   const hostUri = Constants.expoConfig?.hostUri;
